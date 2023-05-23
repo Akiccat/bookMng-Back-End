@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accenture.powerup.bookmng.repository.BookRepository">
+
+
+    <select id="searchBooks" resultType="Book">
+        SELECT
+        book_id,
+        author_name,
+        publisher_name,
+        book_name,
+        quantity,
+        create_date_time,
+        update_date_time
+        from book
+        <where>
+            <choose>
+                <when test="bookId != null and bookId !=''">
+                    and book_id like #{bookId} and delete_flag = false
+                </when>
+                <when test="bookName != null and bookName != ''
+                            and publisherName = null and publisherName = ''
+                            and authorName = null and authorName = ''">
+                    and book_Name like #{bookName, jdbcType=VARCHAR} and delete_flag = false
+                </when>
+                <when test="bookName != null and bookName != ''
+                            and publisherName != null and publisherName != ''
+                            and authorName = null and authorName = ''">
+                    and book_Name like #{bookName, jdbcType=VARCHAR} and publisher_name like #{publisherName, jdbcType=VARCHAR} and delete_flag = false
+                </when>
+                <when test="bookName != null and bookName != ''
+                            and publisherName = null and publisherName = ''
+                            and authorName != null and authorName != ''">
+                    and book_Name like #{bookName, jdbcType=VARCHAR} and author_name like #{authorName, jdbcType=VARCHAR} and delete_flag = false
+                </when>
+                <when test="bookName != null and bookName != ''
+                            and publisherName != null and publisherName != ''
+                            and authorName !=null and authorName != ''">
+                    and book_Name like #{bookName, jdbcType=VARCHAR} and publisher_name like #{publisherName, jdbcType=VARCHAR} and author_name like
+                    #{authorName, jdbcType=VARCHAR} and delete_flag = false
+                </when>
+                <otherwise>
+                    and 1=1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="getReturnBooks" resultType="ReturnBook">
+        SELECT
+            history_id,book_id,borrow_date
+        from
+            borrow_history
+        <where>
+            <choose>
+                <when test="bookId != null and bookId !=''">
+                    and book_id = #{bookId} and user_id = #{userId} and delete_flag = false
+                </when>
+                <otherwise>
+                    and user_id = #{userId} and delete_flag = false
+                </otherwise>
+            </choose>
+
+        </where>
+    </select>
+
+    <insert id="borrowBook">
+        INSERT
+        INTO
+            borrow_history(user_id, book_id, borrow_date, return_date,delete_flag)
+        VALUES
+            (#{userId},#{bookId},#{borrowDate},#{returnDate},false)
+    </insert>
+
+    <insert id="addBook">
+        INSERT
+        INTO
+            book(author_name, publisher_name, book_name, quantity)
+        VALUES
+            (#{authorName},#{publisherName},#{bookName},#{quantity})
+    </insert>
+
+    <update id="editBook">
+        UPDATE
+            book
+        SET
+            author_name = #{authorName},
+            publisher_name = #{publisherName},
+            book_name = #{bookName},
+            quantity = #{quantity},
+            update_date_time = now()
+        WHERE
+            book_id = #{bookId}
+    </update>
+
+    <update id="deleteBook">
+        UPDATE
+            book
+        SET
+            delete_flag = true,
+            update_date_time = now()
+        WHERE
+            book_id = #{bookId}
+    </update>
+
+    <update id="returnBook">
+        UPDATE
+            borrow_history
+        SET
+            return_date = #{returnDate},
+            delete_flag = true
+        Where
+            history_id = #{historyId}
+    </update>
+</mapper>

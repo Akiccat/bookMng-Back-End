@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accenture.powerup.bookmng.repository.RankingRepository">
+    <select id="getBookRanking" resultType="BookRanking">
+        SELECT
+            book_id,
+            COUNT( book_id ) borrowCount
+        FROM
+            borrow_history
+        GROUP BY
+            book_id
+        ORDER BY
+            COUNT( book_id )
+        DESC
+        LIMIT 5
+    </select>
+    <select id="getUserRanking" resultType="UserRanking">
+        SELECT
+            user_id,
+            COUNT( user_id ) borrowCount
+        FROM
+            borrow_history
+        GROUP BY
+            user_id
+        ORDER BY
+            COUNT( user_id )
+                DESC
+        LIMIT 5
+    </select>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accenture.powerup.bookmng.repository.LoginLogRepository">
+  <!-- 插入登录日志 -->
+  <insert id="insert" parameterType="LoginLog">
+    INSERT INTO login_log
+    (
+      user_id
+      , user_type
+      , login_date_time
+      , create_date_time
+      , update_date_time
+      , delete_flag
+    )
+    VALUES
+    (
+      #{userId, jdbcType=INTEGER}
+      , #{userType, jdbcType=INTEGER}
+      , #{loginDateTime, jdbcType=TIMESTAMP}
+      , #{createDateTime, jdbcType=TIMESTAMP}
+      , #{updateDateTime, jdbcType=TIMESTAMP}
+      , #{deleteFlag, jdbcType=BOOLEAN}
+    )
+  </insert>
+
+  <select id="getLogs" resultType="GetLoginLog">
+    SELECT user_id,user_type,login_date_time FROM login_log
+  </select>
+</mapper>
